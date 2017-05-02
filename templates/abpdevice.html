@@ -1,0 +1,260 @@
+{{ define "content" }}
+	 {{with .Devices}}
+	{{if not .ABP}} <p> Eror: No Activate By Personalisation device has been found </p>
+	{{ else }}
+	{{range .ABP}}
+	<form class="form-horizontal" id="update_form" action="/device/{{.AppEUI}}/{{.DevAddr}}" method="POST">
+	<fieldset>
+
+	<!-- Form Name -->
+	<legend><h3>Device Info - ABP</h3></legend>
+
+	<!-- Text input-->
+	<div class="form-group">
+	  <label class="col-md-4 control-label" for="DevAdr">Device Address</label>  
+	  <div class="col-md-4">
+	  <input id="DevAdr" name="DevAdr" type="text" value={{.DevAddr}} class="form-control input-md" readonly>
+    
+	  </div>
+	</div>
+	
+	<!-- Text input-->
+	<div class="form-group">
+	  <label class="col-md-4 control-label" for="AppEui">App EUI</label>  
+	  <div class="col-md-4">
+	  <input id="AppEui" name="AppEui" type="text" value={{.AppEUI}} class="form-control input-md" readonly>
+
+	  </div>
+	</div>
+
+	<!-- Text input-->
+	<div class="form-group">
+	  <label class="col-md-4 control-label" for="NwkSKey">Network Session Key</label>  
+	  <div class="col-md-4">
+	  <input id="NwkSKey" name="NwkSKey" type="text" value={{.NwkSKey}} class="form-control input-md">
+    
+	  </div>
+	</div>
+
+	<!-- Text input-->
+	<div class="form-group">
+	  <label class="col-md-4 control-label" for="AppSKey">App Session Key</label>  
+	  <div class="col-md-4">
+	  <input id="AppSKey" name="AppSKey" type="text" value={{.AppSKey}} class="form-control input-md">
+    
+	  </div>
+	</div>
+
+	<!-- Multiple Checkboxes -->
+	<div class="form-group">
+	  <label class="col-md-4 control-label" for="fcntcheckbox">Relax FCnt</label>
+	  <div class="col-md-4">
+	  <div class="checkbox">
+	    <label for="fcntcheckbox-0">
+	      <input type="checkbox" name="fcntcheckbox" id="fcntcheckbox-0" value="1" {{if .Flags}}checked{{ end }}>
+	      Yes / No
+	    </label>
+		</div>
+	  </div>
+	</div>
+	
+	<!-- Button (Double) -->
+	<div class="form-group">
+	  <label class="col-md-4 control-label" for="button1id"></label>
+	  <div class="col-md-8">
+	    <button id="updatebutton" name="updatebutton" class="btn btn-primary" value="Update" type="submit">Update</button>
+	    <button id="deletebutton" name="deletebutton" class="btn btn-danger" value="Delete" type="submit">Delete</button>
+		<a id="cancelbutton" href="/devices/{{.AppEUI}}" name="cancelbutton" class="btn btn-success" >Cancel</a>
+	  </div>
+	</div>
+
+	</fieldset>
+	</form>
+	{{end}}
+    <div class="page-header">
+      <h3>MQTT Device Data</h3>
+    </div>
+    <div class="row">
+	<div class="center-block">
+      <div class="col-md-4"> 
+		  <div class="panel panel-primary">
+		    <div class="panel-heading">Payload (Hex)</div>
+		    <div class="panel-body fixed-panel"><ul id='ws' style="font-family: 'Courier New', Courier, monospace;"></ul></div>
+		  </div>
+		  <div>Status: <input type='text' id='status' size="80" disabled /></div>
+		  <div><br><button id="connectbutton" name="connectbutton" id="connect" onclick="startConnect()" class="btn btn-primary">Connect</button></div>
+  	</div>
+	</div>
+  	</div>
+	<script type="text/javascript">
+      var host = "52.49.74.158";  //mqtt websocket enabled broker
+      var port = 9001; // port for above
+	  var mqtt;
+	  var path = '/mqtt';
+	  var topic;
+	 {{range .ABP}}
+	  topic = "{{.AppEUI}}/devices/00000000{{.DevAddr}}/up";
+	 {{end}}
+	  var username;
+	  var password;
+	  var reconnectTimeout = 2000;
+	  var reconnectFlag = true;
+	  function MQTTconnect() {
+	  	mqtt = new Paho.MQTT.Client(
+	  			host,
+	  			port,
+	  			path,
+	  			"web_" + parseInt(Math.random() * 100, 10)
+	  	);
+	    var options = {
+	       timeout: 3,
+	       onSuccess: onConnect,
+	       onFailure: function (message) {
+	           $('#status').val("Connection failed: " + message.errorMessage + "Retrying");
+	               setTimeout(MQTTconnect, reconnectTimeout);
+	           }
+	    };
+	    mqtt.onConnectionLost = onConnectionLost;
+	    mqtt.onMessageArrived = onMessageArrived;
+	    if (username != null) {
+	        options.userName = username;
+	        options.password = password;
+	    }
+	    console.log("Host="+ host + ", port=" + port + ", path=" + path + " username=" + username + " password=" + password);
+	    mqtt.connect(options);
+	  }
+	  
+	    function onConnect() {
+	       $('#status').val('Connected to ' + host + ':' + port);
+	       // Connection succeeded; subscribe to our topic
+	       mqtt.subscribe(topic, {qos: 0});
+	       //$('#topic').val(topic);
+		   reconnectFlag = true;
+	    }
+		
+	    function onConnectionLost(response) {
+		   if (reconnectFlag) {
+		      setTimeout(MQTTconnect, reconnectTimeout);   
+		   }
+		    $('#status').val("connection lost: " + response.errorMessage + ". Reconnecting");
+	    };
+		
+	    function onMessageArrived(message) {
+	       //var topic = message.destinationName;
+	       var payload = message.payloadString;
+		   var jsonPayload = JSON.parse(payload);
+		   var hexData = base64toHEX(jsonPayload.payload);
+		   var curTime =  new Date().toLocaleTimeString('en-GB', { hour: "numeric", minute: "numeric"});
+	       $('#ws').prepend('<li>' +curTime + ': ' + hexData + '</li>');
+	    };
+		
+		function startConnect() {
+   		 if (mqtt != null) {
+			reconnectFlag = false;  
+   			mqtt.disconnect(); 
+   		 }
+		   MQTTconnect();
+	    }
+		
+		function base64toHEX(base64) {
+
+		  var raw = atob(base64);
+
+		  var HEX = '';
+
+		  for ( i = 0; i < raw.length; i++ ) {
+
+		    var _hex = raw.charCodeAt(i).toString(16)
+
+		    HEX += (_hex.length==2?_hex:'0'+_hex);
+
+		  }
+		  return HEX.toUpperCase();
+
+		}
+	</script>
+	<script>
+	    $(document).ready(function() {
+	       $('#update_form').bootstrapValidator({
+	           // To use feedback icons, ensure that you use Bootstrap v3.1.0 or later
+	           feedbackIcons: {
+	               valid: 'glyphicon glyphicon-ok',
+	               invalid: 'glyphicon glyphicon-remove',
+	               validating: 'glyphicon glyphicon-refresh'
+	           },
+	           fields: {
+	               NwkSKey: {
+	                   validators: {
+	                           stringLength: {
+	                           min: 32,
+							   max: 32,
+							   message:'Please enter valid Network Session Key'
+	                       },
+						   regexp: {
+						       regexp: /^[a-zA-Z0-9]+$/,
+						       message: 'The Network Session Key can only consist of alphanumeric characters'
+						   },
+	                           notEmpty: {
+	                           message: 'Please enter valid Network Session Key'
+	                       }
+	                   }
+	               },
+	                AppSKey: {
+	                   validators: {
+	                        stringLength: {
+	                           min: 32,
+							   max: 32,
+							   message:'Please enter valid Application Session Key'
+	                       },
+						   regexp: {
+						       regexp: /^[a-zA-Z0-9]+$/,
+						       message: 'The Application Session Key can only consist of alphanumeric characters'
+						   },
+	                       notEmpty: {
+	                           message: 'Please enter valid Application Session Key'
+	                       }
+	                   }
+	               }
+	               }
+	           })
+	           .on('success.form.bv', function(e) {
+				   
+	               //$('#update_form').data('bootstrapValidator').resetForm();
+
+	               // Prevent form submission
+	              // e.preventDefault();
+
+	               // Get the form instance
+	             //  var $form = $(e.target);
+				   
+				 //  bootbox.confirm({
+				 //      message: "Are you sure you wish to continue?",
+				 //      buttons: {
+				 //          confirm: {
+				 //              label: 'Yes',
+				 //              className: 'btn-success'
+				 //          },
+				 //          cancel: {
+				//               label: 'No',
+				//               className: 'btn-danger'
+				//           }
+				//       },
+				//       callback: function (result) {
+				//		   if(result){
+				//               //Use Ajax to submit form data
+				//               $.post($form.attr('action'), $form.serialize(), function(result) {
+				//                   console.log(result);
+				//               }, 'json');
+				//		   }
+				//           console.log('This was logged in the callback: ' + result);
+				//       }
+				//   });
+
+	               // Get the BootstrapValidator instance
+	               //var bv = $form.data('bootstrapValidator');
+	           });
+	   });
+	</script>
+	{{end}}
+	{{end}}
+{{ end }}

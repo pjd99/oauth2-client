@@ -1,0 +1,102 @@
+{{ define "content" }}
+		<form class="form-horizontal" id="addotaa_form" action="/addotaa/{{.SelectedAppEUI}}" method="POST">
+		<fieldset>
+
+		<!-- Form Name -->
+		<legend><h3>Add OTAA Device</h3></legend>
+
+		<!-- Text input-->
+		<div class="form-group">
+		  <label class="col-md-4 control-label" for="DevEui">Device EUI</label>  
+		  <div class="col-md-4">
+		  <input id="DevEui" name="DevEui" type="text"  class="form-control input-md" >
+    
+		  </div>
+		</div>
+		
+
+		<!-- Text input-->
+		<div class="form-group">
+		  <label class="col-md-4 control-label" for="AppKey">App Key</label>  
+		  <div class="col-md-4">
+		  <input id="AppKey" name="AppKey" type="text"  class="form-control input-md">
+    
+		  </div>
+		</div>
+
+		<!-- Button (Double) -->
+		<div class="form-group">
+		  <label class="col-md-4 control-label" for="button1id"></label>
+		  <div class="col-md-8">
+		    <button id="addbutton" name="addbutton" class="btn btn-primary" value="Add" type="submit">Add</button>
+		    <a id="cancelbutton" href="/devices/{{.SelectedAppEUI}}" name="cancelbutton" class="btn btn-success" >Cancel</a>
+		  </div>
+		</div>
+
+		</fieldset>
+		</form>
+		<script>
+		    $(document).ready(function() {
+		       $('#addotaa_form').bootstrapValidator({
+		           // To use feedback icons, ensure that you use Bootstrap v3.1.0 or later
+		           feedbackIcons: {
+		               valid: 'glyphicon glyphicon-ok',
+		               invalid: 'glyphicon glyphicon-remove',
+		               validating: 'glyphicon glyphicon-refresh'
+		           },
+		           fields: {
+		               DevEui: {
+		                   validators: {
+		                           stringLength: {
+		                           min: 16,
+								   max: 16,
+								   message:'Please enter valid Device EUI'
+		                       },
+							   regexp: {
+							       regexp: /^[a-zA-Z0-9]+$/,
+							       message: 'The Device EUI can only consist of alphanumeric characters'
+							   },
+		                           notEmpty: {
+		                           message: 'Please enter valid Device EUI'
+		                       }
+		                   }
+		               },
+		               AppKey: {
+		                   validators: {
+		                           stringLength: {
+		                           min: 32,
+								   max: 32,
+								   message:'Please enter valid Application Key'
+		                       },
+							   regexp: {
+							       regexp: /^[a-zA-Z0-9]+$/,
+							       message: 'The Application Key can only consist of alphanumeric characters'
+							   },
+		                           notEmpty: {
+		                           message: 'Please enter valid Application Key'
+		                       }
+		                   }
+		               }
+		               }
+		           })
+		           .on('success.form.bv', function(e) {
+				   
+		               //$('#update_form').data('bootstrapValidator').resetForm();
+
+		               // Prevent form submission
+		               //e.preventDefault();
+
+		               // Get the form instance
+		               //var $form = $(e.target);
+
+		               // Get the BootstrapValidator instance
+		               //var bv = $form.data('bootstrapValidator');
+
+		               // Use Ajax to submit form data
+		               //$.post($form.attr('action'), $form.serialize(), function(result) {
+		              //     console.log(result);
+		              // }, 'json');
+		           });
+		   });
+		</script>
+{{ end }}

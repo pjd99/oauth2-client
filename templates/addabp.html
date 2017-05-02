@@ -1,0 +1,139 @@
+{{ define "content" }}
+	<form class="form-horizontal" id="addabp_form" action="/addabp/{{.SelectedAppEUI}}" method="POST">
+	<fieldset>
+
+	<!-- Form Name -->
+	<legend><h3>Add ABP Device</h3></legend>
+
+	<!-- Text input-->
+	<div class="form-group">
+	  <label class="col-md-4 control-label" for="DevAdr">Device Address</label>  
+	  <div class="col-md-4">
+	  <input id="DevAdr" name="DevAdr" type="text" class="form-control input-md" >
+    
+	  </div>
+	</div>
+
+	<!-- Text input-->
+	<div class="form-group">
+	  <label class="col-md-4 control-label" for="NwkSKey">Network Session Key</label>  
+	  <div class="col-md-4">
+	  <input id="NwkSKey" name="NwkSKey" type="text"  class="form-control input-md">
+    
+	  </div>
+	</div>
+
+	<!-- Text input-->
+	<div class="form-group">
+	  <label class="col-md-4 control-label" for="AppSKey">App Session Key</label>  
+	  <div class="col-md-4">
+	  <input id="AppSKey" name="AppSKey" type="text"  class="form-control input-md">
+    
+	  </div>
+	</div>
+
+	<!-- Multiple Checkboxes -->
+	<div class="form-group">
+	  <label class="col-md-4 control-label" for="fcntcheckbox">Relax FCnt</label>
+	  <div class="col-md-4">
+	  <div class="checkbox">
+	    <label for="fcntcheckbox-0">
+	      <input type="checkbox" name="fcntcheckbox" id="fcntcheckbox-0" value="1" checked>
+	      Yes / No
+	    </label>
+		</div>
+	  </div>
+	</div>
+	
+	<!-- Button (Double) -->
+	<div class="form-group">
+	  <label class="col-md-4 control-label" for="button1id"></label>
+	  <div class="col-md-8">
+	    <button id="addbutton" name="addbutton" class="btn btn-primary" value="Add" type="submit">Add</button>
+		<a id="cancelbutton" href="/devices/{{.SelectedAppEUI}}" name="cancelbutton" class="btn btn-success" >Cancel</a>
+	  </div>
+	</div>
+
+	</fieldset>
+	</form>
+	<script>
+	    $(document).ready(function() {
+	       $('#addabp_form').bootstrapValidator({
+	           // To use feedback icons, ensure that you use Bootstrap v3.1.0 or later
+	           feedbackIcons: {
+	               valid: 'glyphicon glyphicon-ok',
+	               invalid: 'glyphicon glyphicon-remove',
+	               validating: 'glyphicon glyphicon-refresh'
+	           },
+	           fields: {
+	               DevAdr: {
+	                   validators: {
+	                           stringLength: {
+	                           min: 8,
+							   max: 8,
+							   message:'Please enter valid Device Address'
+	                       },
+						   regexp: {
+						       regexp: /^[a-zA-Z0-9]+$/,
+						       message: 'The Device Address can only consist of alphanumeric characters'
+						   },
+	                           notEmpty: {
+	                           message: 'Please enter valid Device Address'
+	                       }
+	                   }
+	               },
+	               NwkSKey: {
+	                   validators: {
+	                           stringLength: {
+	                           min: 32,
+							   max: 32,
+							   message:'Please enter valid Network Session Key'
+	                       },
+						   regexp: {
+						       regexp: /^[a-zA-Z0-9]+$/,
+						       message: 'The Network Session Key can only consist of alphanumeric characters'
+						   },
+	                           notEmpty: {
+	                           message: 'Please enter valid Network Session Key'
+	                       }
+	                   }
+	               },
+	                AppSKey: {
+	                   validators: {
+	                        stringLength: {
+	                           min: 32,
+							   max: 32,
+							   message:'Please enter valid Application Session Key'
+	                       },
+						   regexp: {
+						       regexp: /^[a-zA-Z0-9]+$/,
+						       message: 'The Application Session Key can only consist of alphanumeric characters'
+						   },
+	                       notEmpty: {
+	                           message: 'Please enter valid Application Session Key'
+	                       }
+	                   }
+	               }
+	               }
+	           })
+	           .on('success.form.bv', function(e) {
+				   
+	               //$('#update_form').data('bootstrapValidator').resetForm();
+
+	               // Prevent form submission
+	               //e.preventDefault();
+
+	               // Get the form instance
+	               //var $form = $(e.target);
+
+	               // Get the BootstrapValidator instance
+	               //var bv = $form.data('bootstrapValidator');
+
+	               // Use Ajax to submit form data
+	               //$.post($form.attr('action'), $form.serialize(), function(result) {
+	              //     console.log(result);
+	              // }, 'json');
+	           });
+	   });
+	</script>
+{{ end }}

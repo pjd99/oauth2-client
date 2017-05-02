@@ -1,0 +1,6 @@
+{{ define "content" }}
+  <div class="page-header">
+    <h1>{{ .Title }}</h1>
+  </div>
+  <table>{{range .AppEui}}<tr><td>{{.}}</td></tr>{{end}}</table>
+{{ end }}

@@ -1,0 +1,30 @@
+{{ define "abpinfo" }}
+	 <h3>ABP</h3>
+	{{if .SelectedAppEUI}}
+	 <a href="/addabp/{{.SelectedAppEUI}}"><button type="button" class="btn btn-sm btn-success">Add</button></a>
+	{{end}}
+	{{with .Devices}}
+	{{if not .ABP}} </br><p> No Activate By Personalisation devices have been found </p>
+	{{ else }}
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Device address</th>
+            <th>FCnt Up</th>
+			<th>FCnt Down</th>
+			<th>Allow FCnt Reset</th>
+          </tr>
+        </thead>
+		<tbody>
+		{{range .ABP}}
+			<tr><td><a href="/device/{{.AppEUI}}/{{.DevAddr}}"><button type="button" class="btn btn-sm btn-primary">{{.DevAddr}}</button></a></td>
+			<td>{{.FCntUp}}</td>
+			<td>{{.FCntDown}}</td>
+			<td>{{.Flags}}</td>
+		</tr>
+		{{end}}
+		</tbody>
+	</table>
+	{{end}}
+	{{end}}
+{{ end }}

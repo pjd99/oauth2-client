@@ -1,0 +1,53 @@
+{{ define "content" }}
+  <div class="page-header">
+    <h1>{{ .Title }}</h1>
+  </div>
+  <div class="row">
+    <div class="col-md-6">	
+	   <a href="/addapplication" class="add-alert"><button type="button" class="btn btn-sm btn-success">Add</button></a>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>EUI</th>
+			<th></th>
+          </tr>
+        </thead>
+		<tbody>
+		{{with .Apps}}{{range .}}
+		<tr><td><a href="/devices/{{.EUI}}"><button type="button" class="btn btn-sm btn-primary">{{.Name}}</button></a></td>
+			<td>{{.EUI}}</td>
+			<td><a href="/delapplication/{{.EUI}}" class="del-alert"><button type="button" class="btn btn-sm btn-danger">Delete</button></a></td>
+		</tr>{{end}}{{end}}
+	    </tbody>
+		</table>
+		</div>
+		</div>
+	    <script>
+		$(document).ready(function() {
+	           $(document).on("click", ".del-alert", function(e) {
+				   e.preventDefault();
+				   var href = $(this).attr('href');
+				   bootbox.confirm({
+				       message: "Are you sure you wish to delete this application?",
+				       buttons: {
+				           confirm: {
+				               label: 'Yes',
+				               className: 'btn-success'
+				           },
+				           cancel: {
+				               label: 'No',
+				               className: 'btn-danger'
+				           }
+				       },
+				       callback: function (result) {
+						   if(result){
+						   	 window.location.href = href;
+						   }
+				           console.log('This was logged in the callback: ' + result);
+				       }
+				   });
+	           });
+		  });
+	       </script>
+{{ end }}

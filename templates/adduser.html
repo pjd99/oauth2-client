@@ -1,0 +1,220 @@
+{{ define "content" }}
+	<form class="form-horizontal" id="adduser_form" action="/adduser" method="POST">
+	<fieldset>
+
+	<!-- Form Name -->
+	<legend><h3>Add User</h3></legend>
+
+	<!-- Text input-->
+	<div class="form-group">
+	  <label class="col-md-4 control-label" for="firstname">First Name</label>  
+	  <div class="col-md-4">
+	  <input id="firstname" name="firstname" type="text" class="form-control input-md" >
+    
+	  </div>
+	</div>
+
+	<!-- Text input-->
+	<div class="form-group">
+	  <label class="col-md-4 control-label" for="lastname">Surname</label>  
+	  <div class="col-md-4">
+	  <input id="lastname" name="lastname" type="text"  class="form-control input-md">
+    
+	  </div>
+	</div>
+
+	<!-- Text input-->
+	<div class="form-group">
+	  <label class="col-md-4 control-label" for="username">Username</label>  
+	  <div class="col-md-4">
+	  <input id="username" name="username" type="text"  class="form-control input-md">
+    
+	  </div>
+	</div>
+	
+	<!-- Text input-->
+	<div class="form-group">
+	  <label class="col-md-4 control-label" for="password">Password</label>  
+	  <div class="col-md-4">
+	  <input id="password" name="password" type="password" class="form-control input-md" >
+    
+	  </div>
+	</div>
+	
+	<!-- Text input-->
+	<div class="form-group">
+	  <label class="col-md-4 control-label" for="cfmpwd">Confirm Password</label>  
+	  <div class="col-md-4">
+	  <input id="cfmpwd" name="cfmpwd" type="password" class="form-control input-md" >
+    
+	  </div>
+	</div>
+	
+	<!-- Text input-->
+	<div class="form-group">
+	  <label class="col-md-4 control-label" for="email">Email</label>  
+	  <div class="col-md-4">
+	  <input id="email" name="email" type="email" class="form-control input-md" >
+    
+	  </div>
+	</div>
+
+	<!-- Multiple Checkboxes -->
+	<div class="form-group">
+	  <label class="col-md-4 control-label" for="admincheckbox">Admin</label>
+	  <div class="col-md-4">
+	  <div class="checkbox">
+	    <label for="admincheckbox-0">
+	      <input type="checkbox" name="admincheckbox" id="admincheckbox-0" value="admin">
+	      Yes / No
+	    </label>
+		</div>
+	  </div>
+	</div>
+	
+	<!-- Button (Double) -->
+	<div class="form-group">
+	  <label class="col-md-4 control-label" for="button1id"></label>
+	  <div class="col-md-8">
+	    <button id="addbutton" name="addbutton" class="btn btn-primary" value="Add" type="submit">Add</button>
+		<a id="cancelbutton" href="/users" name="cancelbutton" class="btn btn-success" >Cancel</a>
+	  </div>
+	</div>
+
+	</fieldset>
+	</form>
+	<script>
+	    $(document).ready(function() {
+	       $('#adduser_form').bootstrapValidator({
+	           // To use feedback icons, ensure that you use Bootstrap v3.1.0 or later
+	           feedbackIcons: {
+	               valid: 'glyphicon glyphicon-ok',
+	               invalid: 'glyphicon glyphicon-remove',
+	               validating: 'glyphicon glyphicon-refresh'
+	           },
+	           fields: {
+	               firstname: {
+	                   validators: {
+	                           stringLength: {
+							   max: 15,
+							   message:'Max length of 15 characters'
+	                       },
+						   regexp: {
+						       regexp: /^[a-zA-Z]+$/,
+						       message: 'The first name can only consist of alphabetic characters'
+						   },
+	                           notEmpty: {
+	                           message: 'First Name is required'
+	                       }
+	                   }
+	               },
+	               lastname: {
+	                   validators: {
+	                           stringLength: {
+							   max: 15,
+							   message:'Max length of 15 characters'
+	                       },
+						   regexp: {
+						       regexp: /^[a-zA-Z]+$/,
+						       message: 'The surname can only consist of alphabetic characters'
+						   },
+	                           notEmpty: {
+	                           message: 'Surname is required'
+	                       }
+	                   }
+	               },
+	               username: {
+	                   validators: {
+	                           stringLength: {
+							   max: 15,
+							   message:'Max length of 15 characters'
+	                       },
+						   regexp: {
+						       regexp: /^[a-zA-Z0-9]+$/,
+						       message: 'The username can only consist of alphanumeric characters'
+						   },
+	                           notEmpty: {
+	                           message: 'Username is required'
+	                       }
+	                   }
+	               },
+	               password: {
+					   enabled: false,
+	                   validators: {
+	                           stringLength: {
+							   max: 15,
+							   message:'Max length of 15 characters'
+	                       },
+						   regexp: {
+						       regexp: /^[a-zA-Z0-9]+$/,
+						       message: 'The password can only consist of alphanumeric characters'
+						   },
+	                           notEmpty: {
+	                           message: 'Password is required'
+	                       }
+	                   }
+	               },
+	               cfmpwd: {
+					   enabled: false,
+	                   validators: {
+	                           stringLength: {
+							   max: 15,
+							   message:'Max length of 15 characters'
+	                       },
+						   regexp: {
+						       regexp: /^[a-zA-Z0-9]+$/,
+						       message: 'The password can only consist of alphabetic characters'
+						   },
+	                       notEmpty: {
+	                           message: 'Confirm password is required'
+	                       },
+						   identical: {
+                           		field: 'password',
+                            	message: 'The password and its confirm must be the same'
+                        	}
+	                   }
+	               },
+	                email: {
+	                   validators: {
+						   notEmpty: {
+						       message: 'The email address is required and can\'t be empty'
+						   },
+						   emailAddress: {
+						       message: 'The value is not a valid email address'
+						   }
+	                   }
+	               }
+	             }
+	           })
+	           .on('success.form.bv', function(e) {
+				   
+	               //$('#update_form').data('bootstrapValidator').resetForm();
+
+	               // Prevent form submission
+	               //e.preventDefault();
+
+	               // Get the form instance
+	               //var $form = $(e.target);
+
+	               // Get the BootstrapValidator instance
+	               //var bv = $form.data('bootstrapValidator');
+
+	               // Use Ajax to submit form data
+	               //$.post($form.attr('action'), $form.serialize(), function(result) {
+	              //     console.log(result);
+	              // }, 'json');
+	           });
+		       // Enable the password/confirm password validators if the password is not empty
+		       $('#adduser_form').find('[name="password"]').on('keyup', function() {
+		           var isEmpty = $(this).val() == '';
+		           $('#adduser_form').bootstrapValidator('enableFieldValidators', 'password', !isEmpty)
+		                           .bootstrapValidator('enableFieldValidators', 'cfmpwd', !isEmpty);
+		           if ($(this).val().length == 1) {
+		               $('#adduser_form').bootstrapValidator('validateField', 'password')
+		                               .bootstrapValidator('validateField', 'cfmpwd');
+		           }
+		       });
+	           
+	   });
+	</script>
+{{ end }}

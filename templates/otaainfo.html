@@ -1,0 +1,27 @@
+{{ define "otaainfo" }}
+		<h3>OTAA</h3>
+		{{if .SelectedAppEUI}}
+		 <a href="/addotaa/{{.SelectedAppEUI}}"><button type="button" class="btn btn-sm btn-success">Add</button></a>
+		{{end}}
+		{{with .Devices}}
+		{{if not .OTAA}}</br><p> No OTAA Devices have been found </p>
+		{{ else }}
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Device EUI</th>
+			  <th>Device address</th>
+              <th>Fcnt Up</th>
+			  <th>Fcnt Down</th>
+            </tr>
+          </thead>
+  		  <tbody>
+			{{range .OTAA}}
+			<tr><td><a href="/device/{{.AppEUI}}/{{.DevEUI}}"><button type="button" class="btn btn-sm btn-primary">{{.DevEUI}}</button></a></td>
+				<td>{{.DevAddr}}</td>
+				<td>{{.FCntUp}}</td>
+				<td>{{.FCntDown}}</td>
+			</tr>{{end}}
+			</tbody>
+		</table>{{end}}{{end}}
+{{ end }}
